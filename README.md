@@ -6,16 +6,16 @@ https://york870198.github.io/UnderTheSunlight/
 
 # 此專案使用的工具
 ## 前端
-React <br>
-styled-components <br>
-webpack <br>
-部署於 github page <br>
+- React <br>
+- styled-components <br>
+- webpack <br>
+- 部署於 github page <br>
 ## 後端
-Node.js <br>
-Express <br>
-MySQL <br>
-Sequelize <br>
-部署於 heroku <br>
+- Node.js <br>
+- Express <br>
+- MySQL <br>
+- Sequelize <br>
+- 部署於 heroku <br>
 
 # 你也許會想問的問題
 ## 網站的完成度你自認有多少
