@@ -107,7 +107,7 @@ export default function ParticipantBlock() {
     fetch('https://underthesunlight-api.herokuapp.com/user', {
       method: 'GET',
       headers: new Headers({
-        mode: 'no-cors'
+        mode: 'cors'
       })
     })
     .then(res => res.json())

@@ -16,6 +16,7 @@ import AboutBlock from './about'
 import HomeBlock from './home'
 import ParticipantBlock from './participant'
 import { UnderConstructionBlock } from './generalBlocks'
+import HomeBrewMagicBlock from './homeBrewMagic'
 
 const fadeInAnimation = keyframes`
   from {
@@ -160,7 +161,7 @@ function App() {
             <UnderConstructionBlock />
           </Route>
           <Route path="/Homebrew">
-            <UnderConstructionBlock />
+            <HomeBrewMagicBlock />
           </Route>
           <Route path="/Auth">
             <AuthBlock useAuth={useAuth}/>
