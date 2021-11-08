@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, createContext } from 'react'
 import styles from 'styled-components'
 import { CSSTransition } from 'react-transition-group'
 
-const apiUrl = 'http://localhost:5000/magic'
+const apiUrl = 'https://underthesunlight-api.herokuapp.com/magic'
 
 const HomeBrewMagicMainDiv = styles.div`
   margin: 75px auto;
