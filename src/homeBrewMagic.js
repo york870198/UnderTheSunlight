@@ -7,19 +7,78 @@ const apiUrl = 'http://localhost:5000/magic'
 const HomeBrewMagicMainDiv = styles.div`
   margin: 75px auto;
   width: 1000px;
-  height: 1000px;
+  min-height: 1000px;
   border: 2px solid blue;
+  padding-top: 20px;
+
+  .formFolder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .formFolderButton {
+    padding: 8px;
+    background: silver;
+    border-radius: 10px;
+  }
+
+  .foldForm {
+    height: 0px;
+    width: 0px;
+    overflow: hidden;
+    transition: height 500ms, width 500ms;
+
+    // enter from
+    &.formUnfold-enter {
+      height: 0px;
+    }
+
+    // enter to
+    &.formUnfold-enter-active {
+      height: 330px;
+    }
+
+    &.formUnfold-enter-done {
+      height: 330px;
+      width: 470px;
+    }
+
+    // exit from
+    &.formUnfold-exit {
+      height: 330px;
+      width: 470px;
+    }
+
+    // exit to 
+    &.formUnfold-exit-active {
+      height: 330px;
+      width: 0px;
+    }
+
+    &.formUnfold-exit-done {
+      height: 0px;
+      width: 0px;
+    }
+  }
+
+
 `
 
 const HomeBrewMagicFormDiv = styles.div`
-  width: 430px;
+  width: 470px;
   margin: 10px auto;
-  border: 2px solid blue;
   padding:20px;
   color: white;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  box-sizing: border-box;
+  position: relative;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%);
 
   div {
     margin-left: 10px;
@@ -46,9 +105,9 @@ const MagicCardWrapperDiv = styles.div`
 
 `
 
-
 const MagicCardDiv = styles.div`
   border: 2px solid rgba(255,255,255, 0.5);
+  border-radius: 4px;
   font-size: 16px;
   width: 250px;
   height: 40px;
@@ -58,11 +117,29 @@ const MagicCardDiv = styles.div`
   padding: 8px 10px;
   box-sizing: border-box;
   overflow-y:hidden;
-  transition: height 300ms;
+  transition: height 300ms, background 500ms;
 
-  div {
+  :hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .magic--title {
     font-weight: bold;
-    height: 20px;
+    height: 22px;
+    text-align: center;
+    transition: ;
+    overflow: hidden;    
+  }
+
+  .magic--info {
+    font-size: 12px;
+    height: 350px;
+  }
+  .magic--description {
+    font-weight: normal;
+    height: 220px;
+    font-size: 14px;
+    overflow-y: auto;
   }
 
   p {
@@ -76,16 +153,16 @@ const MagicCardDiv = styles.div`
 
   // enter to
   &.unfold-enter-active {
-    height: 300px;
+    height: 400px;
   }
 
   &.unfold-enter-done {
-    height: 300px;
+    height: 400px;
   }
 
   // exit from
   &.unfold-exit {
-    height: 300px;
+    height: 400px;
   }
 
   // exit to 
@@ -98,12 +175,12 @@ const MagicCardDiv = styles.div`
   }
 `
 
-function HomeBrewMagicFormBlock() {
+function HomeBrewMagicFormBlock(props) {
   const initValue = {
     name: '',
     type: 'general spell',
     level: 1,
-    dice:'+0',
+    dice: '+0',
     color: 'invisible',
     range: 'none',
     depletion: '',
@@ -121,7 +198,10 @@ function HomeBrewMagicFormBlock() {
     })
     .then(res=>res.json())
     .catch(error=> console.log(error))
-    .then(response=>console.log(response))
+    .then(response=>{
+      handleReset()
+      props.getAllMagic()
+    })
   }
   function preSendValidate(obj){
     let result = {...obj}
@@ -222,14 +302,56 @@ function HomeBrewMagicFormBlock() {
 }
 
 function MagicCardBlock(props){
-  const { name, type, level, dice, color, range, depletion, description } = props.obj
+  const { id, name, type, level, dice, color, range, depletion, description } = props.obj
   const [unfold, setunFold] = useState(false)
+  function parseColorToChinese(colorStr) {
+    let result = ''
+    switch(color){
+      case 'invisible': 
+        result = '無'
+        break
+      case 'silver':
+        result = '銀'
+        break
+      case 'green':
+        result = '綠'
+        break
+      case 'blue': 
+        result = '藍'
+        break
+      case 'indigo':
+        result = '靛'
+        break
+      case 'grey':
+        result = '灰'
+        break
+      case 'pale':
+        result = '薄'
+        break
+      case 'red':
+        result = '紅'
+        break
+      case 'gold':
+        result = '金'
+        break
+      default: return ''
+    }
+    return result
+  }
   return(
     <CSSTransition in={unfold} timeout={300} classNames="unfold">
       <MagicCardDiv onClick={()=>{setunFold(state=>!state)}}>
-        <div>{name}</div>
-        <p>{type}</p>
-        <p>等級 {level} {(dice!=='+0' && `( ${dice} 骰)`)}</p>
+        <div className='magic--title'>{name}</div>
+        <div className='magic--info' onClick={(e)=>{e.stopPropagation()}}>
+          <p>{type}</p>
+          <p>等級 {level} {(dice!=='+0' && `( ${dice} 骰)`)}</p>
+          <p>顏色：{parseColorToChinese(color)}</p>
+          <p>射程：{range}</p>
+          {(depletion !== '') && <p>失效：{'\n'}{depletion}</p>}
+          <div className='magic--description'>{description.split('\n').map((line, index)=>{
+            return (<p key={`${id}+${index}`}>{line}</p>)
+          })}</div>
+        </div>
 
       </MagicCardDiv>
     </CSSTransition>
@@ -238,6 +360,7 @@ function MagicCardBlock(props){
 
 export default function HomeBrewMagicBlock() {
   const [allMagics, setAllMagics] = useState([])
+  const [formUnfold, setFormUnfold] = useState(false)
   function getAllMagic() {
     fetch(apiUrl, {
       method: 'GET',
@@ -259,7 +382,14 @@ export default function HomeBrewMagicBlock() {
   },[])
   return(
     <HomeBrewMagicMainDiv>
-      <HomeBrewMagicFormBlock/>
+      <div className='formFolder'>
+        <div className='formFolderButton' onClick={(e)=>{setFormUnfold((state)=>(!state))}}>Create a new magic</div>
+        <CSSTransition in={formUnfold} timeout={500} classNames="formUnfold">
+          <div className='foldForm'>
+            <HomeBrewMagicFormBlock getAllMagic={getAllMagic}/>
+          </div>
+        </CSSTransition>
+      </div>
       <MagicCardWrapperDiv>
         {allMagics.map((magic)=>(
           <MagicCardBlock key={`magic-${magic.id}`} obj={magic}/>
